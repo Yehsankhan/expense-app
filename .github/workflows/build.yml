@@ -11,9 +11,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # ----------------------------
-    # FORCE JAVA 17 (CRITICAL FIX)
-    # ----------------------------
     - name: Set up Java 17
       uses: actions/setup-java@v4
       with:
@@ -37,9 +34,9 @@ jobs:
         pip install cython buildozer
 
     # ----------------------------
-    # ANDROID SDK FIXED (JAVA 17 READY)
+    # FIXED ANDROID SDK (NO LICENSE ERROR)
     # ----------------------------
-    - name: Install Android SDK
+    - name: Install Android SDK (FIXED)
       run: |
         mkdir -p $HOME/android-sdk/cmdline-tools
         cd $HOME/android-sdk/cmdline-tools
@@ -50,12 +47,13 @@ jobs:
         rm -rf latest
         mv cmdline-tools latest
 
-        export JAVA_HOME=$JAVA_HOME
         export ANDROID_SDK_ROOT=$HOME/android-sdk
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
 
+        # IMPORTANT: accept ALL licenses automatically
         yes | sdkmanager --licenses || true
 
+        # USE STABLE BUILD TOOLS (NOT 37)
         sdkmanager "platform-tools" \
                    "platforms;android-31" \
                    "build-tools;31.0.0"
