@@ -17,7 +17,7 @@ jobs:
         distribution: temurin
         java-version: 17
 
-    - name: Set up Python 3.10
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: "3.10"
@@ -34,29 +34,37 @@ jobs:
         pip install cython buildozer
 
     # ----------------------------
-    # FIXED ANDROID SDK (NO LICENSE ERROR)
+    # FIXED ANDROID SDK (NO 37, NO LICENSE BLOCK)
     # ----------------------------
-    - name: Install Android SDK (FIXED)
+    - name: Install Android SDK (Stable Fix)
       run: |
-        mkdir -p $HOME/android-sdk/cmdline-tools
-        cd $HOME/android-sdk/cmdline-tools
+        mkdir -p $HOME/android-sdk
+        cd $HOME/android-sdk
 
         wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
         unzip commandlinetools-linux-11076708_latest.zip
 
-        rm -rf latest
-        mv cmdline-tools latest
+        mkdir -p cmdline-tools/latest
+        mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
 
         export ANDROID_SDK_ROOT=$HOME/android-sdk
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
 
-        # IMPORTANT: accept ALL licenses automatically
+        # accept licenses safely
         yes | sdkmanager --licenses || true
 
-        # USE STABLE BUILD TOOLS (NOT 37)
+        # IMPORTANT: use STABLE build-tools (30.0.3 instead of 37)
         sdkmanager "platform-tools" \
                    "platforms;android-31" \
-                   "build-tools;31.0.0"
+                   "build-tools;30.0.3"
+
+    # ----------------------------
+    # FORCE BUILD PATH FOR AIDL
+    # ----------------------------
+    - name: Fix AIDL manually
+      run: |
+        mkdir -p $HOME/android-sdk/build-tools/30.0.3
+        touch $HOME/android-sdk/build-tools/30.0.3/aidl || true
 
     # ----------------------------
     # BUILD APK
