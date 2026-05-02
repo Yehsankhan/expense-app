@@ -16,7 +16,7 @@ source.main = main.py
 version = 1.0
 
 # Requirements (IMPORTANT)
-requirements = python3,kivy,kivymd,reportlab
+requirements = python3,kivy==2.2.1
 
 # Orientation
 orientation = portrait
