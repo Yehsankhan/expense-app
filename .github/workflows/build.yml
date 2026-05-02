@@ -22,10 +22,10 @@ jobs:
       with:
         python-version: "3.10"
 
-    - name: Install system dependencies
+    - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y git zip unzip wget python3-pip \
+        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip \
         build-essential libffi-dev libssl-dev
 
     - name: Install Buildozer
@@ -33,52 +33,18 @@ jobs:
         python -m pip install --upgrade pip
         pip install cython buildozer
 
-    # ----------------------------
-    # FIXED ANDROID SDK (NO 37, NO LICENSE BLOCK)
-    # ----------------------------
-    - name: Install Android SDK (Stable Fix)
+    # IMPORTANT: CLEAN OLD FAILED SDK
+    - name: Clean Buildozer cache
       run: |
-        mkdir -p $HOME/android-sdk
-        cd $HOME/android-sdk
-
-        wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-        unzip commandlinetools-linux-11076708_latest.zip
-
-        mkdir -p cmdline-tools/latest
-        mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
-
-        export ANDROID_SDK_ROOT=$HOME/android-sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
-
-        # accept licenses safely
-        yes | sdkmanager --licenses || true
-
-        # IMPORTANT: use STABLE build-tools (30.0.3 instead of 37)
-        sdkmanager "platform-tools" \
-                   "platforms;android-31" \
-                   "build-tools;30.0.3"
+        rm -rf ~/.buildozer
 
     # ----------------------------
-    # FORCE BUILD PATH FOR AIDL
-    # ----------------------------
-    - name: Fix AIDL manually
-      run: |
-        mkdir -p $HOME/android-sdk/build-tools/30.0.3
-        touch $HOME/android-sdk/build-tools/30.0.3/aidl || true
-
-    # ----------------------------
-    # BUILD APK
+    # FIX: FORCE STABLE BUILD
     # ----------------------------
     - name: Build APK
-      env:
-        ANDROIDSDK: $HOME/android-sdk
-        ANDROID_HOME: $HOME/android-sdk
       run: |
-        buildozer android debug
+        yes | buildozer android debug
 
-    # ----------------------------
-    # UPLOAD APK
-    # ----------------------------
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
