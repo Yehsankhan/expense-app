@@ -1,0 +1,103 @@
+ScreenManager:
+    LoginScreen:
+    DashboardScreen:
+    ChartsScreen:
+
+
+<LoginScreen>:
+    name: "login"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: 40
+        spacing: 20
+
+        MDLabel:
+            text: "Expense Tracker"
+            halign: "center"
+            font_style: "H4"
+
+        MDTextField:
+            id: username
+            hint_text: "Username"
+
+        MDTextField:
+            id: password
+            hint_text: "Password"
+            password: True
+
+        MDRaisedButton:
+            text: "LOGIN"
+            on_release: app.login_user(username.text, password.text)
+
+        MDRaisedButton:
+            text: "REGISTER"
+            on_release: app.register_user(username.text, password.text)
+
+
+<DashboardScreen>:
+    name: "dashboard"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Dashboard"
+
+        MDCard:
+            size_hint_y: None
+            height: "120dp"
+            padding: 10
+
+            MDBoxLayout:
+                orientation: "vertical"
+
+                MDLabel:
+                    id: budget_label
+                    text: "Budget not set"
+                    halign: "center"
+
+                MDProgressBar:
+                    id: budget_bar
+                    value: 0
+
+        ScrollView:
+            MDList:
+                id: expense_list
+
+        MDBoxLayout:
+            size_hint_y: None
+            height: "60dp"
+
+            MDRaisedButton:
+                text: "Add"
+                on_release: app.add_expense_dialog()
+
+            MDRaisedButton:
+                text: "Budget"
+                on_release: app.set_budget_dialog()
+
+            MDRaisedButton:
+                text: "Charts"
+                on_release: app.go_to_charts()
+
+            MDRaisedButton:
+                text: "PDF"
+                on_release: app.export_pdf()
+
+
+<ChartsScreen>:
+    name: "charts"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Analytics"
+
+        Widget:
+            id: chart_area
+
+        MDRaisedButton:
+            text: "BACK"
+            on_release: app.root.current = "dashboard"
