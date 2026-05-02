@@ -13,7 +13,6 @@ requirements = python3,kivy==2.2.1,kivymd,matplotlib,pandas,reportlab
 orientation = portrait
 fullscreen = 0
 
-# Android settings
 android.permissions = INTERNET
 android.api = 31
 android.minapi = 21
